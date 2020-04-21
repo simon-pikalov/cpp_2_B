@@ -24,14 +24,11 @@ namespace family
 
         Tree(string name) {
                 this->me = name;
-                this->root=this;
                 this->father = NULL;
                 this->mother=NULL;
 
         }
 
-        Tree(string name,Tree* father, Tree* mother) {
-        }
 
         Tree& addFather(string prsoon, string father);
 
@@ -43,16 +40,17 @@ namespace family
 
         void remove(string name);
 
-        Tree * findNodeName (string name);
 
-        Tree * findNodeRealtion (string relation);
 
         void display();
 
-        string relation(Tree * curr, string name , int count,bool male);
+
 
     private:
-        Tree * addFamilyMember(Tree* root, bool, string name);
+        string relation(Tree * curr, string name , int count,bool male);
+        Tree * findNodeRealtion (string relation);
+        Tree * findNodeName (string name);
+
     };
 
 
