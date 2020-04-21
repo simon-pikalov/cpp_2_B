@@ -6,6 +6,21 @@
 using namespace family;
 using namespace std;
 
+
+Tree::Tree(string name) {
+this->me = name;
+this->father = NULL;
+this->mother=NULL;
+
+}
+Tree::~Tree(){
+    delete this->father;
+    delete this->mother;
+
+}
+
+
+
 class invalidInputExeption: public exception
 {
     virtual const char* what() const throw()
@@ -214,9 +229,35 @@ Tree * Tree::findNodeName(string name) {
 }
 
 
-void Tree::remove(string name) {
-
+/**
+ *
+ * @param name the name of the family member
+ * @return  a pointer to the member node
+ */
+Tree * Tree::findChild(string name) {
+    if(this==NULL) return NULL;
+    if(this->father!=NULL&&this->father->me==name||this->mother!=NULL&&this->mother->me==name) return this;
+    Tree * fatherCheck = (this->father==NULL)?NULL:this->father->findChild(name);
+    Tree * motherCheck = (this->mother==NULL)?NULL:this->mother->findChild(name);
+    if(fatherCheck!=NULL) return fatherCheck;
+    else if(motherCheck != NULL )return  motherCheck;
+    else return  NULL;
 }
+
+
+void Tree::remove(string name) {
+    Tree * curr = findNodeName(name);
+    if(curr)curr->~Tree(); //call to The distructor
+    else return;
+    Tree * child = findChild(name);
+    if (child->father->me ==name) child->father=NULL;
+    else child->mother=NULL;
+}
+
+
+
+
+
 
 /**
  * Inner function to find the a pointer to a node by relation

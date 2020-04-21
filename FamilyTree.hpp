@@ -22,13 +22,8 @@ namespace family
         Tree *root;
 
 
-        Tree(string name) {
-                this->me = name;
-                this->father = NULL;
-                this->mother=NULL;
-
-        }
-
+        Tree(string name);
+        ~Tree();
 
         Tree& addFather(string prsoon, string father);
 
@@ -40,9 +35,8 @@ namespace family
 
         void remove(string name);
 
-
-
         void display();
+
 
 
 
@@ -50,6 +44,7 @@ namespace family
         string relation(Tree * curr, string name , int count,bool male);
         Tree * findNodeRealtion (string relation);
         Tree * findNodeName (string name);
+        Tree * findChild (string name);
 
     };
 
