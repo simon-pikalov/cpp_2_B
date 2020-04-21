@@ -210,7 +210,8 @@ string Tree::relation(Tree * curr , string name , int depth,bool male ) {
  */
 string Tree::find(string relation) {
   Tree * ans = findNodeRealtion(relation);
-  if(ans!=NULL) return  ans->me;
+  if(ans!=NULL) return ans->me;
+  else throw inputEx;
 
 
 }
@@ -248,7 +249,7 @@ Tree * Tree::findChild(string name) {
 void Tree::remove(string name) {
     Tree * curr = findNodeName(name);
     if(curr)curr->~Tree(); //call to The distructor
-    else return;
+    else throw  inputEx;
     Tree * child = findChild(name);
     if (child->father->me ==name) child->father=NULL;
     else child->mother=NULL;
