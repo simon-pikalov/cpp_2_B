@@ -49,7 +49,7 @@ Tree& Tree::addFather(string to, string name) {
 
     Tree* curr = this->findNodeName(to);
     Tree * newNode = new Tree(name);
-    if(curr->father!=NULL) throw placeEx;
+    if(curr==NULL||curr->father!=NULL) throw placeEx;
     else (curr->father=newNode);
     return *this;
 }
@@ -62,7 +62,7 @@ Tree& Tree::addFather(string to, string name) {
 Tree &Tree::addMother(string to, string name) {
     Tree* curr = this->findNodeName(to);
     Tree * newNode = new Tree(name);
-    if(curr->mother!=NULL) throw placeEx;
+    if(curr==NULL||curr->mother!=NULL) throw placeEx;
     else (curr->mother=newNode);
     return *this;
 }
@@ -155,17 +155,18 @@ string Tree::relation(Tree * curr , string name , int depth,bool male ) {
 
         } else {
             if (curr->father != NULL) {
+                int tempDepth = depth+1;
+                string temp = this->relation(curr->father, name, tempDepth, true);
+                if (temp != "") return temp;
 
-                string temp = this->relation(curr->father, name, ++depth, true);
-           //     if (temp != "unrelated") return temp;
-                return  temp;
 
             }
 
             if (curr->mother != NULL) {
-                string temp = this->relation(curr->father, name, ++depth, false);
-             //   if (temp != "unrelated") return temp;
-                return  temp;
+                int tempDepth = depth+1;
+                string temp = this->relation(curr->mother, name,tempDepth , false);
+               if (temp != "") return temp;
+
             }
         }
 
@@ -179,23 +180,26 @@ string Tree::relation(Tree * curr , string name , int depth,bool male ) {
             for (int i = 0; i < depth - 2; i++) { //generate a prefix
                 prefix = prefix + "great-";
             }
-            string suffix = (male == true) ? "grandfather" : "grandmother";
+            string suffix = (male) ? "grandfather" : "grandmother";
             return prefix + suffix;
         } else if (curr->father != NULL || curr->mother != NULL) {
 
+
             if (curr->father != NULL) {
-                string temp = this->relation(curr->father, name, ++depth, true);
-                if (temp != "unrelated") return temp;
+                int next = depth+1;
+                string temp = this->relation(curr->father, name, next, true);
+                if (temp != "") return temp;
             }
 
             if (curr->mother != NULL) {
-                string temp = this->relation(curr->father, name, ++depth, false);
-                if (temp != "unrelated") return temp;
+                int next = depth+1;
+                string temp = this->relation(curr->mother, name, next, false);
+                if (temp != "") return temp;
             }
 
 
         }
-        else return "unrelated";
+        else return "";
 
 
     }
@@ -251,7 +255,7 @@ void Tree::remove(string name) {
     if(curr)curr->~Tree(); //call to The distructor
     else throw  inputEx;
     Tree * child = findChild(name);
-    if (child->father->me ==name) child->father=NULL;
+    if (child->father!=NULL&&child->father->me ==name) child->father=NULL;
     else child->mother=NULL;
 }
 
@@ -267,6 +271,7 @@ void Tree::remove(string name) {
  */
 Tree *Tree::findNodeRealtion(string relation) {
     vector<string> splitedRelation = split(relation, "-");
+     if(!checkValidFind(splitedRelation))   throw inputEx;
     Tree *curr = this;
     for (int i = 0; i < splitedRelation.size(); i++) {
         if (splitedRelation[i] == "father" && curr->father != NULL) {
@@ -275,12 +280,31 @@ Tree *Tree::findNodeRealtion(string relation) {
         else if (splitedRelation[i] == "mother" && curr->mother != NULL) {
             curr = curr->mother;
         }
-        else if (splitedRelation[i] == "grandmother" && curr->father != NULL && curr->father->father != NULL) {
-            curr = curr->father->mother;
+        else if (splitedRelation[i] == "grandmother" && ((curr->father != NULL && curr->father->mother != NULL)||(curr->mother != NULL && curr->mother->mother != NULL))) {
+
+            if((curr->father != NULL && curr->father->mother != NULL)){
+                if(i==0)  curr = this->father->mother;
+                else curr = curr->father->mother;
+
+            } else{
+                if(i==0)  curr = this->mother->mother;
+                else curr = curr->mother->mother;
+
+            }
+
         }
-        else if (splitedRelation[i] == "grandfather" && curr->father != NULL && curr->father->father != NULL) {
-          if(i==0)  curr = curr->father->father;
-          else curr = curr->father;
+        else if (splitedRelation[i] == "grandfather" && ((curr->father != NULL && curr->father->father != NULL)||(curr->mother != NULL && curr->mother->father != NULL))) {
+
+            if((curr->father != NULL && curr->father->father != NULL)){
+                if(i==0)  curr = this->father->father;
+                else curr = curr->father->father;
+
+            } else{
+                if(i==0)  curr = this->mother->father;
+                else curr = curr->mother->father;
+
+            }
+
         }
 
         else if (splitedRelation[i] == "great" && curr->father != NULL ) {
@@ -288,13 +312,29 @@ Tree *Tree::findNodeRealtion(string relation) {
         }
 
         else{
-            cout<<"Wrong input detected :"<<relation<<"  at index :"<<i<<endl;
             throw inputEx;
         }
 
     }
 
     return  curr;
+}
+
+bool Tree::checkValidFind( vector<string> splitedRelation) {
+if(splitedRelation.size()==1) {
+    return (splitedRelation[0] == "mother" || splitedRelation[0] == "father" || splitedRelation[0] == "grandfather" ||
+            splitedRelation[0] == "grandmother" || splitedRelation[0] == "me");
+}
+    else{
+        for(int i =0 ; i <splitedRelation.size()-1;i++){
+            if(splitedRelation[i]!="great") return false;
+        }
+        return (splitedRelation[splitedRelation.size()-1]=="grandfather"||splitedRelation[splitedRelation.size()-1]=="grandmother");
+
+    }
+
+
+
 }
 
 

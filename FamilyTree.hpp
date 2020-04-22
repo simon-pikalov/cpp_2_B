@@ -45,6 +45,7 @@ namespace family
         Tree * findNodeRealtion (string relation);
         Tree * findNodeName (string name);
         Tree * findChild (string name);
+        bool checkValidFind(  vector<string> splitedRelation);
 
     };
 

@@ -78,26 +78,33 @@ TEST_CASE("Yosef Tree case") {
 
 	// Remove test case
 	//CHECK_THROWS(T.remove("Yosef"));  // removing the root is an error
+	
 	CHECK_THROWS(T.remove(" "));      // removing a non-existent person
 	CHECK_THROWS(T.remove("xyz"));
 	CHECK_THROWS(T.remove("Ariel"));
 	CHECK_THROWS(T.remove("  Rivka"));
 
+
 	T.remove("Yosi");  // remove the great-great-grandfather
 	CHECK_THROWS(T.find("great-great-grandfather"));  // A removed relation does not exist
 	T.addFather("Avraham", "Ido");  // Add a new father after removal
 	T.remove("Avi");
+
 	CHECK_THROWS(T.addFather("Avi", "Israel"));  // add to a removed person
 	T.addFather("Rachel", "Shmual");
+	cout<<"im here ";
 	T.remove("Isaac");
 	T.remove("Rivka");
 	T.remove("Ruti");
+
 	CHECK_THROWS(T.find("grandmother"));
 	CHECK_THROWS(T.addFather("Isaac", "Avraham"));
 	CHECK_THROWS(T.addMother("Isaac", "Ruti"));
 	CHECK_THROWS(T.addFather("Rivka", "Israel"));
 	CHECK_THROWS(T.addMother("Rivka", "Sara"));
+	
 	T.remove("Yaakov");  // remove father
+	cout<<"im here ";
 	T.remove("Rachel");  // remove mother
 	CHECK_THROWS(T.find("father"));
 	CHECK_THROWS(T.find("mother"));
@@ -105,6 +112,7 @@ TEST_CASE("Yosef Tree case") {
 	CHECK_THROWS(T.addMother("Yaakov", "Ruti"));      // add to non-existent person
 	CHECK_THROWS(T.addFather("Rachel", "Avraham"));   // add to non-existent person
 	CHECK_THROWS(T.addMother("Rachel", "Ruti"));      // add to non-existent person
+
 }
 
 /*
